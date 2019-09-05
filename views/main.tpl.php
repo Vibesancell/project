@@ -14,16 +14,22 @@
     <div class="convert">
         <div class="title_convert">
           <h1 class="text-center login-title">Roman and Arabic number converter</h1>
-            <form  method="post">
+            <form  method="post" data-ng-submit="saveNumber()">
 							<div class="roman_number">
 								<p>Enter roman number</p>
-								<textarea rows="10" cols="40" name="roman_number" placeholder="Exmaple:MVII" id="roman_number" required><?php if( isset( $_POST['roman_number'] ) ){ echo  $_POST['roman_number']; }?></textarea>
+								<textarea rows="10" cols="40" name="roman_number" placeholder="Exmaple:MVII" id="roman_number" required><?php  if(isset( $_POST['roman_number'] )){ echo $_POST['roman_number']; }?></textarea>
 							</div>
 							<div class="arabic_number">
 								<p>Arabic number</p>
-								<textarea rows="10" cols="40" name="arabic_number" id="arabic_number" readonly><?php if( isset( $_POST['roman_number'] )){ ProjectController::Roman2Int(  $_POST['roman_number'] ); }?></textarea>
+								<textarea rows="10" cols="40" name="arabic_number" id="arabic_number" readonly><?php if(isset( $_POST['roman_number'] ) ){
+										if( is_numeric( $_POST['roman_number'])){
+											trim(ProjectController::toNumeral(  $_POST['roman_number'] ) );
+										} elseif (is_string( $_POST['roman_number'] ) ){
+											trim(ProjectController::Roman2Int(  $_POST['roman_number'] ));
+										}
+									}?></textarea>
 							</div>
-						<button type="submit" class="button"><i class="fas fa-arrows-alt-h"></i></button>
+							<button type="submit" class="button"><i class="fas fa-arrows-alt-h"></i></button>
       		</div>
 				</form>
 			</div>
@@ -72,9 +78,12 @@
 				</tr>
 			</table>
 		</div>
+		<script src="js/angular.min.js"></script>
+	<script src="js/users.js"></script>
 </body>
 </html>
 <?php require_once('controllers/ProjectController.php');
+require_once('models/ProjectModel.php');
 if( isset( $_POST['roman_number'] ) && isset( $_POST['arabic_number'] ) ){
 	  $file = "save_number.txt";
 	if ( ! file_exists( $file ) ) {
